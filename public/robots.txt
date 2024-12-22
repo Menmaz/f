@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /cq7tfO6Tadmin
+Sitemap: https://hihitruyen.com/sitemap.xml

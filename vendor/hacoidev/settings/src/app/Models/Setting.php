@@ -1,0 +1,85 @@
+<?php
+
+namespace Backpack\Settings\app\Models;
+
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Config;
+use Illuminate\Database\Eloquent\Model;
+use Hacoidev\CachingModel\Contracts\Cacheable;
+use Hacoidev\CachingModel\HasCache;
+
+class Setting extends Model implements Cacheable
+{
+    use CrudTrait;
+    use HasCache;
+
+    protected $guarded = [];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->table = config('backpack.settings.table_name');
+    }
+
+    public static function primaryCacheKey(): string
+    {
+        return 'key';
+    }
+
+    /**
+     * Grab a setting value from the database.
+     *
+     * @param string $key The setting key, as defined in the key db column
+     *
+     * @return string The setting value.
+     */
+    public static function get($key)
+    {
+        $setting = static::fromCache()->find($key);
+
+        if (!$setting) {
+            return;
+        }
+
+        return $setting->value;
+    }
+
+    /**
+     * Update a setting's value.
+     *
+     * @param string $key   The setting key, as defined in the key db column
+     * @param string $value The new value.
+     */
+    public static function set($key, $value = null)
+    {
+        $database_prefix = config('backpack.settings.database_prefix');
+
+        $prefixed_key = !empty($database_prefix) ? $database_prefix.'.'.$key : $key;
+        $setting = new self();
+        $entry = $setting->where('key', $key)->firstOrFail();
+
+        // update the value in the database
+        $entry->value = $value;
+        $entry->saveOrFail();
+
+        // update the value in the session
+        Config::set($prefixed_key, $value);
+
+        if (Config::get($prefixed_key) == $value) {
+            return true;
+        }
+
+        return false;
+    }
+
+    
+    //FUNCTIONS
+    public function getImage($image_url){
+        if(strpos($image_url, '/storage/') !== false){
+            $image_url = url($image_url);
+        }
+
+        return $image_url;
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "name": "tannhatcms/notifications",
+    "description": "Application Mod Notifications interface for Laravel 5 using Backpack CRUD.",
+    "type": "package",
+    "keywords": [
+        "tan nhat cms notifications",
+        "notifications"
+    ],
+
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tan Nhat CMS"
+        }
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.4",
+        "hacoidev/ophim-core": "^1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ophim\\Notifications\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ophim\\Notifications\\NotificationsServiceProvider"
+            ]
+        }
+    }
+}
